@@ -2,7 +2,8 @@ const csv = require('csvtojson');
 const path = require('path');
 const jsonfile = require('jsonfile');
 
-const csvFilePathFeatures = path.join(__dirname, 'raw', 'features-mini.csv');
+const csvFilePathFeatures = path.join(__dirname, 'raw', 'features.csv');
+const csvFilePathProduct = path.join(__dirname, 'raw', 'product.csv');
 
 csv()
   .fromFile(csvFilePathFeatures)
@@ -17,44 +18,40 @@ csv()
         value = null;
       }
       if (Number(featureObj.product_id) !== product_id) {
-        product_id = Number(relatedObj.product_id);
+        product_id = Number(featureObj.product_id);
         features = [{ feature, value }];
         allFeatures[product_id] = features;
       } else {
-        features.push(Number(relatedObj.related_product_id));
+        features.push({ feature, value });
       }
     });
     csv()
-      //do something with products data and allFeatures
-  })
+      .fromFile(csvFilePathProduct)
+      .then((jsonArray) => {
+        const batchedAllProducts = [];
+        let allProducts = [];
+        jsonArray.forEach((productObj, index) => {
+          if (allProducts.length === 100000) {
+            batchedAllProducts.push(allProducts);
+            allProducts = [];
+          }
+          product_id = Number(productObj.id);
+          const default_price = Number(productObj.default_price);
+          features = allFeatures[product_id] || [];
+          const { name, slogan, description, category } = productObj;
+          const productInfo = { product_id, name, slogan, description, category, default_price, features };
+          allProducts.push(productInfo);
+        });
+        if (allProducts.length > 0) {
+          batchedAllProducts.push(allProducts);
+        }
+        batchedAllProducts.forEach((allProducts, index) => {
+          const jsonFilePathProduct = path.join(__dirname, 'transformed', `product${index + 1}.json`);
+          jsonfile.writeFile(jsonFilePathProduct, allProducts)
+            .then(console.log('File created: ', jsonFilePathProduct));
+        });
+      });
+  });
 
 
 
-
-  .then((jsonArray) => {
-    const batchedAllProducts = [];
-    let allProducts = [];
-    let product_id = 0;
-    let features;
-    jsonArray.forEach((relatedObj, index) => {
-      if (allRelatedProducts.length === 100000) {
-        batchedAllRelatedProducts.push(allRelatedProducts);
-        allRelatedProducts = [];
-      }
-      if (Number(relatedObj.current_product_id) !== product_id) {
-        product_id = Number(relatedObj.current_product_id);
-        related_products = [Number(relatedObj.related_product_id)];
-        allRelatedProducts.push({ product_id, related_products })
-      } else {
-        related_products.push(Number(relatedObj.related_product_id));
-      }
-    });
-    if (allRelatedProducts.length > 0) {
-      batchedAllRelatedProducts.push(allRelatedProducts);
-    }
-    batchedAllRelatedProducts.forEach((allRelatedProducts, index) => {
-      const jsonFilePathRelated = path.join(__dirname, 'transformed', `related${index + 1}.json`);
-      jsonfile.writeFile(jsonFilePathRelated, allRelatedProducts)
-        .then(console.log('File created: ', jsonFilePathRelated));
-    })
-  })
