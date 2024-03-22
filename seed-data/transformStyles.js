@@ -2,9 +2,9 @@ const csv = require('csvtojson');
 const path = require('path');
 const jsonfile = require('jsonfile');
 
-const csvFilePathStyles = path.join(__dirname, 'raw', 'styles-mini.csv');
-const csvFilePathPhotos = path.join(__dirname, 'raw', 'photos-mini.csv');
-const csvFilePathSkus = path.join(__dirname, 'raw', 'skus-mini.csv');
+const csvFilePathStyles = path.join(__dirname, 'raw', 'styles.csv');
+const csvFilePathPhotos = path.join(__dirname, 'raw', 'photos.csv');
+const csvFilePathSkus = path.join(__dirname, 'raw', 'skus.csv');
 
 // transform photos data
 csv()
@@ -84,6 +84,3 @@ csv()
           });
       });
   });
-
-
-

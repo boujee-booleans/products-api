@@ -1,3 +1,4 @@
 node_modules/
 seed-data/raw/
+seed-data/raw-batches/
 seed-data/transformed/
