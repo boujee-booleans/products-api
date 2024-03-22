@@ -39,7 +39,7 @@ fs.readFile(csvFilePathStyles, 'utf8')
     batchedSplitData.push(headerRow + splitData.join('\n'));
     console.log('File ', batchedSplitData.length, ' final style_id is: ', finalStyle_id);
     batchedSplitData.forEach((splitData, index) => {
-      const csvBatchFilePath = `${csvBatchPath}styles-${index + 1}.csv`;
+      const csvBatchFilePath = `${csvBatchPath}styles${index + 1}.csv`;
       fs.writeFile(csvBatchFilePath, splitData)
         .then(() => {
           console.log('File created: ', csvBatchFilePath)

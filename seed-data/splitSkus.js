@@ -1,7 +1,7 @@
 const fs = require('fs/promises');
 const path = require('path');
 
-const csvFilePathStyles = path.join(__dirname, 'raw', 'photos.csv');
+const csvFilePathStyles = path.join(__dirname, 'raw', 'skus.csv');
 
 const csvBatchPath = path.join(__dirname, 'raw-batches/');
 
@@ -9,9 +9,7 @@ const styleLimits = [245021, 489000, 733439, 977197, 1222226, 1467658, 1712625, 
 
 fs.readFile(csvFilePathStyles, 'utf8')
   .then((data) => {
-    console.log('Got here');
     const rows = data.split('\n');
-    console.log('Got here???');
     let style_id = 0;
     let headerRow = rows[0];
     const batchedSplitData = [];
@@ -28,10 +26,10 @@ fs.readFile(csvFilePathStyles, 'utf8')
         style_id = curr_style_id;
         splitData.push(curr_style_data);
         curr_style_data = rows[i];
-        if (splitData.length >= styleLimit) {
+        if (curr_style_id > styleLimit) {
           styleLimitIndex ++;
           styleLimit = styleLimits[styleLimitIndex];
-          const nextStyle_id = rows[i].slice(0, rows[i].indexOf(','));
+          console.log(styleLimit);
           batchedSplitData.push(headerRow + splitData.join('\n'));
           splitData = [];
         }
@@ -40,10 +38,9 @@ fs.readFile(csvFilePathStyles, 'utf8')
       }
     }
     splitData.push(curr_style_data);
-    const finalStyle_id = splitData[splitData.length - 1].slice(0, splitData[splitData.length - 1].indexOf(','));
     batchedSplitData.push(headerRow + splitData.join('\n'));
     batchedSplitData.forEach((splitData, index) => {
-      const csvBatchFilePath = `${csvBatchPath}photos${index + 1}.csv`;
+      const csvBatchFilePath = `${csvBatchPath}skus${index + 1}.csv`;
       fs.writeFile(csvBatchFilePath, splitData)
         .then(() => {
           console.log('File created: ', csvBatchFilePath)
