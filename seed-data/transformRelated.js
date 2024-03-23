@@ -18,10 +18,10 @@ csv()
       }
       if (Number(relatedObj.current_product_id) !== product_id) {
         product_id = Number(relatedObj.current_product_id);
-        related_products = [Number(relatedObj.related_product_id)];
+        related_products = [{related_product_id: Number(relatedObj.related_product_id)}];
         allRelatedProducts.push({ product_id, related_products })
       } else {
-        related_products.push(Number(relatedObj.related_product_id));
+        related_products.push({related_product_id: Number(relatedObj.related_product_id)});
       }
     });
     if (allRelatedProducts.length > 0) {

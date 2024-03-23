@@ -2,9 +2,10 @@ const csv = require('csvtojson');
 const path = require('path');
 const jsonfile = require('jsonfile');
 
-const csvFilePathStyles = path.join(__dirname, 'raw', 'styles.csv');
-const csvFilePathPhotos = path.join(__dirname, 'raw', 'photos.csv');
-const csvFilePathSkus = path.join(__dirname, 'raw', 'skus.csv');
+const styleBatch = 9;
+const csvFilePathStyles = path.join(__dirname, 'raw-batches', `styles${styleBatch}.csv`);
+const csvFilePathPhotos = path.join(__dirname, 'raw-batches', `photos${styleBatch}.csv`);
+const csvFilePathSkus = path.join(__dirname, 'raw-batches', `skus${styleBatch}.csv`);
 
 // transform photos data
 csv()
@@ -77,7 +78,7 @@ csv()
               batchedAllStyles.push(allStyles);
             }
             batchedAllStyles.forEach((allStyles, index) => {
-              const jsonFilePathStyle = path.join(__dirname, 'transformed', `style-mini${index + 1}.json`);
+              const jsonFilePathStyle = path.join(__dirname, 'transformed', `style-${styleBatch}-${index + 1}.json`);
               jsonfile.writeFile(jsonFilePathStyle, allStyles)
                 .then(console.log('File created: ', jsonFilePathStyle));
             });
