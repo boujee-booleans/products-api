@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 
-const connection = mongoose.connect('mongodb://127.0.0.1:27017/productsAPI');
+const database_url = process.env.DATABASE_URL || '127.0.0.1:27017';
+
+const connection = mongoose.connect(`mongodb://${database_url}/productsAPI`);
 
 // products collection
 const featureSchema = new mongoose.Schema({
