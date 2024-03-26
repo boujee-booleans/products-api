@@ -1,8 +1,15 @@
 const mongoose = require('mongoose');
 
-const database_url = process.env.DATABASE_URL || '127.0.0.1:27017';
+const db_url = process.env.DATABASE_URL || '127.0.0.1:27017';
+const db_user = process.env.DATABASE_USERNAME || '';
+const db_pwd = process.env.DATABASE_PASSWORD || '';
+const db_auth = process.env.DATABASE_AUTHORIZATION_DATABASE || '';
 
-const connection = mongoose.connect(`mongodb://${database_url}/productsAPI`);
+const connection = mongoose.connect(`mongodb://${db_url}/productsAPI`, {
+  user: db_user,
+  pass: db_pwd,
+  authSource: db_auth
+});
 
 // products collection
 const featureSchema = new mongoose.Schema({
