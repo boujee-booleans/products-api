@@ -2,7 +2,6 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 
-// const routeCache = require('route-cache');
 const apicache = require('apicache');
 
 const db = require('../database/database.js');
@@ -31,6 +30,7 @@ app.get('/products', (req, res) => {
     });
 });
 
+// get single product info
 app.get('/products/:product_id', (req, res) => {
   const product_id = req.params.product_id;
   db.Product.findOne({ product_id }, '-_id -features._id')
@@ -43,9 +43,7 @@ app.get('/products/:product_id', (req, res) => {
     });
 });
 
-//, routeCache.cacheSeconds(30)
-
-// Without aggregation
+// get styles for a product
 app.get('/products/:product_id/styles', (req, res) => {
   const product_id = req.params.product_id;
   db.AllStyle.findOne({ product_id }, '-_id -results._id -results.photos._id -results.skus._id')
@@ -69,29 +67,7 @@ app.get('/products/:product_id/styles', (req, res) => {
     });
 });
 
-// exploring aggregation - will come back to it
-// app.get('/products/:product_id/styles', (req, res) => {
-//   const product_id = req.params.product_id;
-//   db.AllStyle.findOne({product_id, $expr: {$map: {
-//     input: results,
-//     as: result,
-//     in: {
-
-//     }
-//   }}}, '-_id -results._id -results.photos._id -results.skus._id')
-//     .lean()
-//     .then((data) => {
-//       if (data === null) {
-//         res.status(200).json({product_id, results: []});
-//       } else {
-//         res.status(200).json(data);
-//       }
-//     }).catch((err) => {
-//       console.log(err);
-//       res.status(500).send(err);
-//     });
-// });
-
+// get related products for a product
 app.get('/products/:product_id/related', (req, res) => {
   const product_id = req.params.product_id;
   db.AllRelatedProduct.findOne({ product_id }, '-_id')
