@@ -1,7 +1,10 @@
 require('dotenv').config();
 const path = require('path');
 const express = require('express');
-const db = require('../database/database.js')
+
+const routeCache = require('route-cache');
+
+const db = require('../database/database.js');
 
 const app = express();
 
@@ -39,7 +42,7 @@ app.get('/products/:product_id', (req, res) => {
 });
 
 // Without aggregation
-app.get('/products/:product_id/styles', (req, res) => {
+app.get('/products/:product_id/styles', routeCache.cacheSeconds(30), (req, res) => {
   const product_id = req.params.product_id;
   db.AllStyle.findOne({ product_id }, '-_id -results._id -results.photos._id -results.skus._id')
     .lean()
